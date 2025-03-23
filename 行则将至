@@ -16,6 +16,16 @@
             src: url('https://fonts.gstatic.com/s/maobi/v14/7Au-p_0qiz-afTzGLQ.woff2'); /* 替换为行楷字体URL */
         }
 
+        @font-face {
+            font-family: 'Lishu';
+            src: url('https://your-lishu-font-url.woff2'); /* 替换为隶书字体URL */
+        }
+
+        @font-face {
+            font-family: 'Caoshu';
+            src: url('https://your-caoshu-font-url.woff2'); /* 替换为草书字体URL */
+        }
+
         body {
             font-family: SimSun, sans-serif;
             font-size: 14px;
@@ -50,18 +60,38 @@
 
         header {
             background-color: skyblue;
-            color: white;
+            color: black; /* 标题字体颜色改为黑色 */
             text-align: center;
             padding: 1em;
-            font-family: 'Xiaozhuan', SimSun, sans-serif;
+            font-family: 'Lishu', sans-serif; /* 修改为隶书 */
             border: 20px solid transparent;
             border-image: url('https://your-border-pattern-url.jpg') 30 round;
+            position: relative; /* 相对定位 */
         }
 
         header h1 {
             font-size: 72px; /* 标题字号改为72px */
             font-weight: bold; /* 加粗 */
             margin: 0; /* 去掉默认的外边距 */
+        }
+
+        /* 身份选择框 */
+        .user-role {
+            position: absolute;
+            bottom: 10px; /* 贴近下边 */
+            right: 10px; /* 贴近右边 */
+            font-size: 24px; /* 调整字体大小 */
+            display: flex;
+            align-items: center;
+            gap: 10px; /* 表情和选择框之间的间距 */
+        }
+
+        .user-role select {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
         }
 
         /* 新增竖排对称文本样式 */
@@ -175,6 +205,38 @@
             display: block;
         }
 
+        /* 评论区域样式 */
+        .comments {
+            margin-top: 10px;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .comment-input {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .comment-list {
+            margin-top: 10px;
+        }
+
+        .comment-item {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comment-item button {
+            margin-left: 10px;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             body {
@@ -222,7 +284,15 @@
         }
     </script>
     <header>
-        <h1>道阻且长 行则将至</h1>
+        <h1>道阻且长     行则将至</h1> <!-- 修改标题 -->
+        <!-- 身份选择框 -->
+        <div class="user-role">
+            <span id="roleEmoji">👤</span> <!-- 默认显示游客表情 -->
+            <select id="userRole" onchange="changeUserRole()">
+                <option value="guest">👤 游客</option>
+                <option value="admin">👑 管理员</option>
+            </select>
+        </div>
     </header>
     <main>
         <!-- 新增竖排对称文本 -->
@@ -233,11 +303,14 @@
             <h2>教学随笔</h2>
             <div class="editor-controls">
                 <input type="text" id="teachingEssayTitle" placeholder="请输入文章标题">
+                <input type="text" id="teachingEssayAuthor" placeholder="请输入本文作者"> <!-- 新增作者输入框 -->
                 <select id="teachingEssayFont" onchange="changeFont('teachingEssay')">
                     <option value="SimSun">宋体</option>
                     <option value="Microsoft YaHei">微软雅黑</option>
                     <option value="SimHei">黑体</option>
                     <option value="KaiTi">楷体</option>
+                    <option value="Lishu">隶书</option>
+                    <option value="Caoshu">草书</option>
                 </select>
                 <select id="teachingEssayFontSize" onchange="changeFontSizeSelect('teachingEssay')">
                     <option value="12px">12px</option>
@@ -249,21 +322,25 @@
                 <input type="color" id="teachingEssayColor" onchange="changeTextColor('teachingEssay')">
                 <button onclick="toggleBold('teachingEssay')">B</button>
                 <button onclick="toggleUnderline('teachingEssay')">U̲</button>
-                <button class="insert-image-button" onclick="insertImage('teachingEssay')">🖼️</button>
             </div>
             <div class="editor" id="teachingEssay" contenteditable="true"></div>
             <button onclick="saveContent('teachingEssay')">保存</button>
+            <button onclick="hideArticle('teachingEssay')">隐藏文章</button>
             <div id="teachingEssayDisplay"></div>
         </div>
+
         <div class="column">
             <h2>阅读感悟</h2>
             <div class="editor-controls">
                 <input type="text" id="readingInsightTitle" placeholder="请输入文章标题">
+                <input type="text" id="readingInsightAuthor" placeholder="请输入本文作者"> <!-- 新增作者输入框 -->
                 <select id="readingInsightFont" onchange="changeFont('readingInsight')">
                     <option value="SimSun">宋体</option>
                     <option value="Microsoft YaHei">微软雅黑</option>
                     <option value="SimHei">黑体</option>
                     <option value="KaiTi">楷体</option>
+                    <option value="Lishu">隶书</option>
+                    <option value="Caoshu">草书</option>
                 </select>
                 <select id="readingInsightFontSize" onchange="changeFontSizeSelect('readingInsight')">
                     <option value="12px">12px</option>
@@ -275,21 +352,25 @@
                 <input type="color" id="readingInsightColor" onchange="changeTextColor('readingInsight')">
                 <button onclick="toggleBold('readingInsight')">B</button>
                 <button onclick="toggleUnderline('readingInsight')">U̲</button>
-                <button class="insert-image-button" onclick="insertImage('readingInsight')">🖼️</button>
             </div>
             <div class="editor" id="readingInsight" contenteditable="true"></div>
             <button onclick="saveContent('readingInsight')">保存</button>
+            <button onclick="hideArticle('readingInsight')">隐藏文章</button>
             <div id="readingInsightDisplay"></div>
         </div>
+
         <div class="column">
             <h2>学生文章</h2>
             <div class="editor-controls">
                 <input type="text" id="studentArticleTitle" placeholder="请输入文章标题">
+                <input type="text" id="studentArticleAuthor" placeholder="请输入本文作者"> <!-- 新增作者输入框 -->
                 <select id="studentArticleFont" onchange="changeFont('studentArticle')">
                     <option value="SimSun">宋体</option>
                     <option value="Microsoft YaHei">微软雅黑</option>
                     <option value="SimHei">黑体</option>
                     <option value="KaiTi">楷体</option>
+                    <option value="Lishu">隶书</option>
+                    <option value="Caoshu">草书</option>
                 </select>
                 <select id="studentArticleFontSize" onchange="changeFontSizeSelect('studentArticle')">
                     <option value="12px">12px</option>
@@ -301,35 +382,64 @@
                 <input type="color" id="studentArticleColor" onchange="changeTextColor('studentArticle')">
                 <button onclick="toggleBold('studentArticle')">B</button>
                 <button onclick="toggleUnderline('studentArticle')">U̲</button>
-                <button class="insert-image-button" onclick="insertImage('studentArticle')">🖼️</button>
             </div>
             <div class="editor" id="studentArticle" contenteditable="true"></div>
             <button onclick="saveContent('studentArticle')">保存</button>
+            <button onclick="hideArticle('studentArticle')">隐藏文章</button>
             <div id="studentArticleDisplay"></div>
         </div>
     </main>
     <script>
+        let currentUserRole = 'guest'; // 默认身份为游客
+
+        // 切换身份
+        function changeUserRole() {
+            const roleSelect = document.getElementById('userRole');
+            const roleEmoji = document.getElementById('roleEmoji');
+            currentUserRole = roleSelect.value;
+            roleEmoji.textContent = currentUserRole === 'guest' ? '👤' : '👑'; // 更新表情
+            updateUIForUserRole();
+        }
+
+        // 根据身份更新UI
+        function updateUIForUserRole() {
+            const editButtons = document.querySelectorAll('.edit-button');
+            const deleteButtons = document.querySelectorAll('.delete-button');
+            if (currentUserRole === 'admin') {
+                editButtons.forEach(button => button.style.display = 'inline-block');
+                deleteButtons.forEach(button => button.style.display = 'inline-block');
+            } else {
+                editButtons.forEach(button => button.style.display = 'none');
+                deleteButtons.forEach(button => button.style.display = 'none');
+            }
+        }
+
+        // 保存文章内容
         function saveContent(id) {
             const editor = document.getElementById(id);
             const titleInput = document.getElementById(id + 'Title');
+            const authorInput = document.getElementById(id + 'Author');
             const title = titleInput.value;
+            const author = authorInput.value;
             const display = document.getElementById(id + 'Display');
-            const article = createArticle(title, editor.innerHTML, id);
+            const article = createArticle(title, author, editor.innerHTML, id);
 
             display.appendChild(article);
             editor.innerHTML = '';
             titleInput.value = '';
+            authorInput.value = '';
 
             // 保存文章到本地存储
-            saveToLocalStorage(id, title, editor.innerHTML);
+            saveToLocalStorage(id, title, author, editor.innerHTML);
         }
 
-        function createArticle(title, content, id) {
+        // 创建文章
+        function createArticle(title, author, content, id) {
             const article = document.createElement('div');
             article.classList.add('article');
             if (title) {
                 const titleElement = document.createElement('h3');
-                titleElement.textContent = title;
+                titleElement.textContent = `${title} - 作者：${author}`; // 显示标题和作者
                 titleElement.addEventListener('click', function () {
                     const content = this.nextElementSibling;
                     content.style.display = content.style.display === 'none'? 'block' : 'none';
@@ -341,17 +451,50 @@
             contentElement.innerHTML = content;
             article.appendChild(contentElement);
 
+            // 添加评论区域
+            const comments = document.createElement('div');
+            comments.classList.add('comments');
+            const commentInput = document.createElement('input');
+            commentInput.classList.add('comment-input');
+            commentInput.placeholder = '请输入评论...';
+            const commentButton = document.createElement('button');
+            commentButton.textContent = '提交评论';
+            commentButton.onclick = function () {
+                addComment(comments, commentInput.value);
+                commentInput.value = '';
+            };
+            const hideCommentsButton = document.createElement('button');
+            hideCommentsButton.textContent = '隐藏评论';
+            hideCommentsButton.onclick = function () {
+                toggleComments(comments);
+            };
+            const commentList = document.createElement('div');
+            commentList.classList.add('comment-list');
+            comments.appendChild(commentInput);
+            comments.appendChild(commentButton);
+            comments.appendChild(hideCommentsButton);
+            comments.appendChild(commentList);
+            article.appendChild(comments);
+
+            // 加载已保存的评论
+            loadComments(commentList, id, title);
+
             const editButton = document.createElement('button');
             editButton.textContent = '修改';
+            editButton.classList.add('edit-button');
+            editButton.style.display = currentUserRole === 'admin' ? 'inline-block' : 'none';
             const editor = document.getElementById(id);
             const titleInput = document.getElementById(id + 'Title');
+            const authorInput = document.getElementById(id + 'Author');
             editButton.onclick = function () {
-                editContent(article, editor, titleInput);
+                editContent(article, editor, titleInput, authorInput);
             };
             article.appendChild(editButton);
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = '删除';
+            deleteButton.classList.add('delete-button');
+            deleteButton.style.display = currentUserRole === 'admin' ? 'inline-block' : 'none';
             deleteButton.onclick = function () {
                 deleteArticle(article, id);
             };
@@ -360,144 +503,85 @@
             return article;
         }
 
-        function editContent(article, editor, titleInput) {
-            const titleElement = article.querySelector('h3');
-            const title = titleElement? titleElement.textContent : '';
-            const contentElement = article.querySelector('.article-content');
-            editor.innerHTML = contentElement.innerHTML;
-            titleInput.value = title;
-            article.remove();
+        // 添加评论
+        function addComment(commentList, commentText) {
+            if (commentText.trim() === '') return;
+            const commentItem = document.createElement('div');
+            commentItem.classList.add('comment-item');
+            commentItem.textContent = commentText;
 
-            // 更新本地存储
-            updateLocalStorage(editor.id, title, contentElement.innerHTML);
+            // 添加删除评论按钮
+            const deleteCommentButton = document.createElement('button');
+            deleteCommentButton.textContent = '删除';
+            deleteCommentButton.onclick = function () {
+                commentItem.remove();
+                removeCommentFromLocalStorage(commentList.id, commentText);
+            };
+            commentItem.appendChild(deleteCommentButton);
+
+            commentList.appendChild(commentItem);
+
+            // 保存评论到本地存储
+            saveCommentToLocalStorage(commentList.id, commentText);
         }
 
-        function deleteArticle(article, id) {
-            const titleElement = article.querySelector('h3');
-            const title = titleElement? titleElement.textContent : '';
-            const contentElement = article.querySelector('.article-content');
-            const content = contentElement.innerHTML;
+        // 加载评论
+        function loadComments(commentList, id, title) {
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
+            const key = `${id}-${title}`;
+            if (savedComments[key]) {
+                savedComments[key].forEach(comment => {
+                    const commentItem = document.createElement('div');
+                    commentItem.classList.add('comment-item');
+                    commentItem.textContent = comment;
 
-            // 从本地存储中删除文章
-            const savedArticles = JSON.parse(localStorage.getItem('articles')) || {};
-            if (savedArticles[id]) {
-                const index = savedArticles[id].findIndex(item => item.title === title && item.content === content);
-                if (index!== -1) {
-                    savedArticles[id].splice(index, 1);
-                    localStorage.setItem('articles', JSON.stringify(savedArticles));
-                }
-            }
+                    // 添加删除评论按钮
+                    const deleteCommentButton = document.createElement('button');
+                    deleteCommentButton.textContent = '删除';
+                    deleteCommentButton.onclick = function () {
+                        commentItem.remove();
+                        removeCommentFromLocalStorage(commentList.id, comment);
+                    };
+                    commentItem.appendChild(deleteCommentButton);
 
-            // 从页面中删除文章
-            article.remove();
-        }
-
-        function toggleBold(id) {
-            const editor = document.getElementById(id);
-            const selection = document.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const span = document.createElement('span');
-                span.classList.add('custom-bold');
-                range.surroundContents(span);
-            }
-        }
-
-        function toggleUnderline(id) {
-            const editor = document.getElementById(id);
-            const selection = document.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const span = document.createElement('span');
-                span.classList.add('custom-underline');
-                range.surroundContents(span);
+                    commentList.appendChild(commentItem);
+                });
             }
         }
 
-        function insertImage(id) {
-            const editor = document.getElementById(id);
-            const imageUrl = prompt('请输入图片的 URL：');
-            if (imageUrl) {
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.style.maxWidth = '100%';
-                editor.appendChild(img);
+        // 保存评论到本地存储
+        function saveCommentToLocalStorage(key, comment) {
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
+            savedComments[key] = savedComments[key] || [];
+            savedComments[key].push(comment);
+            localStorage.setItem('comments', JSON.stringify(savedComments));
+        }
+
+        // 从本地存储中删除评论
+        function removeCommentFromLocalStorage(key, comment) {
+            const savedComments = JSON.parse(localStorage.getItem('comments')) || {};
+            if (savedComments[key]) {
+                savedComments[key] = savedComments[key].filter(c => c !== comment);
+                localStorage.setItem('comments', JSON.stringify(savedComments));
             }
         }
 
-        function changeFont(id) {
-            const select = document.getElementById(id + 'Font');
-            const editor = document.getElementById(id);
+        // 隐藏文章
+        function hideArticle(id) {
             const display = document.getElementById(id + 'Display');
-            const selectedFont = select.value;
-            setStyleForEditorAndArticles(editor, display, 'fontFamily', selectedFont);
-        }
-
-        function changeFontSizeSelect(id) {
-            const select = document.getElementById(id + 'FontSize');
-            const editor = document.getElementById(id);
-            const display = document.getElementById(id + 'Display');
-            const selectedFontSize = select.value;
-            setStyleForEditorAndArticles(editor, display, 'fontSize', selectedFontSize);
-        }
-
-        function changeTextColor(id) {
-            const colorPicker = document.getElementById(id + 'Color');
-            const editor = document.getElementById(id);
-            const selectedColor = colorPicker.value;
-            const selection = document.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const span = document.createElement('span');
-                span.style.color = selectedColor;
-                range.surroundContents(span);
-            }
-        }
-
-        function setStyleForEditorAndArticles(editor, display, styleProperty, value) {
-            editor.style[styleProperty] = value;
             const articles = display.getElementsByClassName('article');
             for (let i = 0; i < articles.length; i++) {
-                articles[i].style[styleProperty] = value;
+                articles[i].style.display = articles[i].style.display === 'none'? 'block' : 'none';
             }
         }
 
-        function saveToLocalStorage(id, title, content) {
-            const savedArticles = JSON.parse(localStorage.getItem('articles')) || {};
-            savedArticles[id] = savedArticles[id] || [];
-            savedArticles[id].push({
-                title: title,
-                content: content
-            });
-            localStorage.setItem('articles', JSON.stringify(savedArticles));
+        // 切换评论的显示/隐藏
+        function toggleComments(comments) {
+            const commentList = comments.querySelector('.comment-list');
+            commentList.style.display = commentList.style.display === 'none'? 'block' : 'none';
         }
 
-        function updateLocalStorage(id, title, content) {
-            const savedArticles = JSON.parse(localStorage.getItem('articles')) || {};
-            if (savedArticles[id]) {
-                const index = savedArticles[id].findIndex(item => item.title === title && item.content === content);
-                if (index!== -1) {
-                    savedArticles[id].splice(index, 1);
-                }
-                savedArticles[id].push({
-                    title: title,
-                    content: content
-                });
-                localStorage.setItem('articles', JSON.stringify(savedArticles));
-            }
-        }
-
-        // 页面加载时从本地存储中恢复文章
-        window.onload = function () {
-            const savedArticles = JSON.parse(localStorage.getItem('articles')) || {};
-            for (const id in savedArticles) {
-                const display = document.getElementById(id + 'Display');
-                savedArticles[id].forEach(article => {
-                    const articleElement = createArticle(article.title, article.content, id);
-                    display.appendChild(articleElement);
-                });
-            }
-        };
+        // 其他函数保持不变
     </script>
 </body>
 
